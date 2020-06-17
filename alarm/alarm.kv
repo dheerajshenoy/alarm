@@ -1,0 +1,97 @@
+<mainWindow>:
+    tree: tree
+    MDToolbar:
+        pos_hint:{"top":1}
+        title:"Alarm"
+        text_color: 0,0,0,1
+        right_action_items: 
+            [["reload",lambda x:root.update_alarm()],["plus",lambda x: root.changeScreen()], ["dots-vertical",lambda x: app.callback()]]
+        md_bg_color: app.theme_cls.accent_color
+
+    ScrollView:
+        do_scroll_y:True
+        do_scroll_x:False
+        pos_hint:{"top":0.92}
+        bar_width: 5
+        GridLayout:
+            size_hint:1,None
+            height:self.minimum_height+70
+            row_default_height:"160dp"
+            id: tree
+            cols:1
+        
+<alarmWindow>:
+    date: date
+    time: time
+    repeat: repeat
+    label: label
+    ok_button: ok_button
+    ringtone_file_name: ringtone_file_name
+    BoxLayout:
+        orientation: "vertical"
+        padding: 10,10
+        spacing:10
+        MDTextField:
+            id: label
+            pos_hint:{"top":0.8}
+            hint_text:"Label"
+            on_text_validate: root.get_label()
+        BoxLayout:
+            spacing:10
+            MDRaisedButton:
+                text:"Pick Date"
+                id: date
+                on_release: root.show_date_picker()
+            MDRaisedButton:
+                text:"Pick Time"
+                id: time
+                on_release: root.show_time_picker()
+            
+        BoxLayout:
+            Label:
+                text:"Repeat"
+            MDCheckbox:
+                id: repeat
+                on_active: root.get_repeat(*args)
+
+        BoxLayout:
+            MDRaisedButton:
+                text:"Choose"
+                on_release: 
+                    root.manager.current = 'alarmwindow'
+                    root.show_file_manager()
+        BoxLayout:
+            Label:
+                text:"File Name:"
+            Label:
+                text_size:self.width,None
+                size_hint:1, None
+                height: self.texture_size[1]
+                text:"No file Selected"
+                id:ringtone_file_name
+        BoxLayout:
+            MDRaisedButton:
+                text:"OK"
+                id: ok_button
+                disabled: True
+                on_release:
+                    root.refresh()
+                    root.manager.transition.direction =  'right'
+                    root.manager.current = 'mainwindow'
+                    root.getinfo()
+                    root.clear_data()
+                    root.ids.ok_button.disabled = True
+                    
+            MDRaisedButton:
+                text:"Cancel"
+                on_release: 
+                    root.ids.ok_button.disabled = True
+                    root.manager.transition.direction = 'right'
+                    root.manager.current = 'mainwindow'
+                    root.clear_data()
+<alarmCard>: 
+    orientation: 'vertical'
+    padding:"20dp","20dp"
+    size_hint:1, None
+    height:"150dp"
+        
